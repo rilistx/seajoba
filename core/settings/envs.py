@@ -1,7 +1,6 @@
 from environs import Env
 
 
-# This class defines environment variables from the ./env file
 class Envs:
     env = Env()
     env.read_env('.env')
