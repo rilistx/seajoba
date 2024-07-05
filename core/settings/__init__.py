@@ -1,7 +1,9 @@
 __all__ = [
     'bot',
-    'admin',
     'storage',
+    'admin_id',
+    'forum_id',
+    'premium_id',
     'postgres_url',
 ]
 
@@ -17,8 +19,10 @@ from core.settings.envs import my_envs
 bot_token = my_envs.get_bot_token()
 pay_token = my_envs.get_pay_token()
 
-admin = my_envs.get_admin_id()
-forum = my_envs.get_forum_id()
+admin_id = my_envs.get_admin_id()
+forum_id = my_envs.get_forum_id()
+
+premium_id = my_envs.get_premium_id()
 
 postgres_data = my_envs.get_postgres_data()
 redis_data = my_envs.get_redis_data()

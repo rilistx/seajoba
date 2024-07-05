@@ -11,6 +11,18 @@ class Base(BaseModel):
     updated: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
 
+class Premium(Base):
+    __tablename__ = 'premium'
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    status: Mapped[bool] = mapped_column(default=False)
+    manager: Mapped[int] = mapped_column(default=0)
+    seamen: Mapped[int] = mapped_column(default=0)
+
+    def __str__(self):
+        return f'Premium: {'yes' if self.status else 'not'} ({self.id})'
+
+
 class Country(Base):
     __tablename__ = 'country'
 
