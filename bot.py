@@ -5,7 +5,6 @@ from core import unpacking
 
 
 async def main() -> None:
-    # Process logging
     logging.basicConfig(
         level=logging.INFO,
         filename="loger.log",
@@ -13,7 +12,6 @@ async def main() -> None:
         format="%(asctime)s %(levelname)s %(message)s",
     )
 
-    # Unpacking and launching the bot
     await unpacking()
 
 

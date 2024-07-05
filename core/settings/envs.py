@@ -22,6 +22,10 @@ class Envs:
         return cls.env.int("FORUM_ID")
 
     @classmethod
+    def get_premium_id(cls) -> int:
+        return cls.env.int("PREMIUM_ID")
+
+    @classmethod
     def get_postgres_data(cls) -> dict:
         return {
             'pg_name': cls.env.str("POSTGRES_DB"),

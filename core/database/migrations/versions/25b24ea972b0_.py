@@ -1,11 +1,10 @@
 """empty message
 
-Revision ID: 7d95261b9151
+Revision ID: 25b24ea972b0
 Revises:
-Create Date: 2024-07-05 15:56:05.851263
+Create Date: 2024-07-05 19:11:43.365776
 
 """
-
 from typing import Sequence, Union
 
 from alembic import op
@@ -13,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '7d95261b9151'
+revision: str = '25b24ea972b0'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -66,6 +65,16 @@ def upgrade() -> None:
         'position',
         sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
         sa.Column('name', sa.String(), nullable=False),
+        sa.Column('created', sa.DateTime(), nullable=False),
+        sa.Column('updated', sa.DateTime(), nullable=False),
+        sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table(
+        'premium',
+        sa.Column('id', sa.BigInteger(), nullable=False),
+        sa.Column('status', sa.Boolean(), nullable=False),
+        sa.Column('manager', sa.Integer(), nullable=False),
+        sa.Column('seamen', sa.Integer(), nullable=False),
         sa.Column('created', sa.DateTime(), nullable=False),
         sa.Column('updated', sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint('id')
@@ -213,6 +222,7 @@ def downgrade() -> None:
     op.drop_table('rank')
     op.drop_table('company')
     op.drop_table('user')
+    op.drop_table('premium')
     op.drop_table('position')
     op.drop_table('nationality')
     op.drop_table('location')
