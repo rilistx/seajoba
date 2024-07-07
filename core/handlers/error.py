@@ -43,4 +43,3 @@ async def error(message: Message, session: AsyncSession, state: FSMContext):
         text=text,
         reply_markup=reply_markup,
     )
-
