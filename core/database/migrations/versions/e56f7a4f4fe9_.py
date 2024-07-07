@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 3744cfbf6b06
+Revision ID: e56f7a4f4fe9
 Revises: 
-Create Date: 2024-07-06 20:05:55.124286
+Create Date: 2024-07-07 16:49:03.180660
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3744cfbf6b06'
+revision: str = 'e56f7a4f4fe9'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -75,9 +75,9 @@ def upgrade() -> None:
     op.create_table('user',
     sa.Column('id', sa.BigInteger(), nullable=False),
     sa.Column('role', sa.String(), nullable=False),
+    sa.Column('first_name', sa.String(), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('premium', sa.Boolean(), nullable=False),
-    sa.Column('is_admin', sa.Boolean(), nullable=False),
     sa.Column('created', sa.DateTime(), nullable=False),
     sa.Column('updated', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -116,7 +116,6 @@ def upgrade() -> None:
     )
     op.create_table('manager',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('first_name', sa.String(), nullable=False),
     sa.Column('phone', sa.String(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('whatsapp', sa.Boolean(), nullable=False),
@@ -128,9 +127,8 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('seaman',
+    op.create_table('sailor',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('first_name', sa.String(), nullable=False),
     sa.Column('phone', sa.String(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('whatsapp', sa.Boolean(), nullable=False),
@@ -177,21 +175,21 @@ def upgrade() -> None:
     )
     op.create_table('favourite',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('seaman_id', sa.BigInteger(), nullable=False),
+    sa.Column('sailor_id', sa.BigInteger(), nullable=False),
     sa.Column('vacancy_id', sa.BigInteger(), nullable=False),
     sa.Column('created', sa.DateTime(), nullable=False),
     sa.Column('updated', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['seaman_id'], ['seaman.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['sailor_id'], ['sailor.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['vacancy_id'], ['vacancy.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('view',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('seaman_id', sa.BigInteger(), nullable=False),
+    sa.Column('sailor_id', sa.BigInteger(), nullable=False),
     sa.Column('vacancy_id', sa.BigInteger(), nullable=False),
     sa.Column('created', sa.DateTime(), nullable=False),
     sa.Column('updated', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['seaman_id'], ['seaman.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['sailor_id'], ['sailor.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['vacancy_id'], ['vacancy.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -203,7 +201,7 @@ def downgrade() -> None:
     op.drop_table('view')
     op.drop_table('favourite')
     op.drop_table('vacancy')
-    op.drop_table('seaman')
+    op.drop_table('sailor')
     op.drop_table('manager')
     op.drop_table('vessel')
     op.drop_table('rank')
