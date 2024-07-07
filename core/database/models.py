@@ -1,10 +1,8 @@
 from sqlalchemy import func, ForeignKey, DateTime, BigInteger
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from core.database.queryset import BaseModel
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
-class Base(BaseModel):
+class Base(DeclarativeBase):
     __abstract__ = True
 
     created: Mapped[DateTime] = mapped_column(DateTime, default=func.now())
@@ -30,7 +28,7 @@ class Country(Base):
     flag: Mapped[str]
 
     def __str__(self):
-        return f'Country name: {self.name} ({self.id})'
+        return f'Country ID: {self.id}'
 
 
 class Nationality(Base):
@@ -40,7 +38,7 @@ class Nationality(Base):
     name: Mapped[str]
 
     def __str__(self):
-        return f'Nationality: {self.name} ({self.id})'
+        return f'Nationality ID: {self.id}'
 
 
 class Location(Base):
@@ -50,7 +48,7 @@ class Location(Base):
     name: Mapped[str]
 
     def __str__(self):
-        return f'Location: {self.name} ({self.id})'
+        return f'Location ID: {self.id}'
 
 
 class Charter(Base):
@@ -61,7 +59,7 @@ class Charter(Base):
     info: Mapped[str | None]
 
     def __str__(self):
-        return f'Charter: {self.name} ({self.id})'
+        return f'Charter ID: {self.id}'
 
 
 class Company(Base):
@@ -79,7 +77,7 @@ class Company(Base):
     country: Mapped['Country'] = relationship(backref='company')
 
     def __str__(self):
-        return f'Company name: {self.name} ({self.id})'
+        return f'Company ID: {self.id}'
 
 
 class Position(Base):
@@ -89,7 +87,7 @@ class Position(Base):
     name: Mapped[str]
 
     def __str__(self):
-        return f'Position: {self.name} ({self.id})'
+        return f'Position ID: {self.id}'
 
 
 class Rank(Base):
@@ -102,7 +100,7 @@ class Rank(Base):
     position: Mapped['Position'] = relationship(backref='rank')
 
     def __str__(self):
-        return f'Rank: {self.name} ({self.position_id} / {self.id})'
+        return f'Rank ID: {self.id}'
 
 
 class Fleet(Base):
@@ -112,7 +110,7 @@ class Fleet(Base):
     name: Mapped[str]
 
     def __str__(self):
-        return f'Fleet: {self.name} ({self.id})'
+        return f'Fleet ID: {self.id}'
 
 
 class Vessel(Base):
@@ -125,7 +123,7 @@ class Vessel(Base):
     fleet: Mapped['Fleet'] = relationship(backref='vessel')
 
     def __str__(self):
-        return f'Vessel: {self.name} ({self.fleet_id} / {self.id})'
+        return f'Vessel ID: {self.id}'
 
 
 class User(Base):
@@ -133,37 +131,18 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     role: Mapped[str]
+    first_name: Mapped[str | None]
     active: Mapped[bool] = mapped_column(default=True)
     premium: Mapped[bool] = mapped_column(default=False)
-    is_admin: Mapped[bool] = mapped_column(default=False)
 
     def __str__(self):
-        return f'User role : {self.role} ({self.id})'
+        return f'User ID: {self.id}'
 
 
-class Manager(Base):
-    __tablename__ = 'manager'
-
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    first_name: Mapped[str]
-    phone: Mapped[str]
-    email: Mapped[str]
-    whatsapp: Mapped[bool]
-    company_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('company.id', ondelete='CASCADE'))
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.id', ondelete='CASCADE'))
-
-    company: Mapped['Company'] = relationship(backref='manager')
-    user: Mapped['User'] = relationship(backref='manager')
-
-    def __str__(self):
-        return f'Manager: {self.first_name} ({self.user_id} / {self.id})'
-
-
-class Seaman(Base):
-    __tablename__ = 'seaman'
+class Sailor(Base):
+    __tablename__ = 'sailor'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    first_name: Mapped[str]
     phone: Mapped[str]
     email: Mapped[str]
     whatsapp: Mapped[bool]
@@ -175,13 +154,30 @@ class Seaman(Base):
     vessel_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('vessel.id', ondelete='CASCADE'))
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.id', ondelete='CASCADE'))
 
-    nationality: Mapped['Nationality'] = relationship(backref='seaman')
-    rank: Mapped['Rank'] = relationship(backref='seaman')
-    vessel: Mapped['Vessel'] = relationship(backref='seaman')
-    user: Mapped['User'] = relationship(backref='seaman')
+    nationality: Mapped['Nationality'] = relationship(backref='sailor')
+    rank: Mapped['Rank'] = relationship(backref='sailor')
+    vessel: Mapped['Vessel'] = relationship(backref='sailor')
+    user: Mapped['User'] = relationship(backref='sailor')
 
     def __str__(self):
-        return f'Seaman: {self.first_name} ({self.user_id} / {self.id})'
+        return f'Sailor ID: {self.id}'
+
+
+class Manager(Base):
+    __tablename__ = 'manager'
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    phone: Mapped[str]
+    email: Mapped[str]
+    whatsapp: Mapped[bool]
+    company_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('company.id', ondelete='CASCADE'))
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.id', ondelete='CASCADE'))
+
+    company: Mapped['Company'] = relationship(backref='manager')
+    user: Mapped['User'] = relationship(backref='manager')
+
+    def __str__(self):
+        return f'Manager ID: {self.id}'
 
 
 class Vacancy(Base):
@@ -218,25 +214,25 @@ class View(Base):
     __tablename__ = 'view'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    seaman_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('seaman.id', ondelete='CASCADE'))
+    sailor_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('sailor.id', ondelete='CASCADE'))
     vacancy_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('vacancy.id', ondelete='CASCADE'))
 
-    seaman: Mapped['Seaman'] = relationship(backref='view')
+    sailor: Mapped['Sailor'] = relationship(backref='view')
     vacancy: Mapped['Vacancy'] = relationship(backref='view')
 
     def __str__(self):
-        return f'View ID: {self.id} ({self.seaman_id} / {self.vacancy_id})'
+        return f'View ID: {self.id}'
 
 
 class Favourite(Base):
     __tablename__ = 'favourite'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    seaman_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('seaman.id', ondelete='CASCADE'))
+    sailor_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('sailor.id', ondelete='CASCADE'))
     vacancy_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('vacancy.id', ondelete='CASCADE'))
 
-    seaman: Mapped['Seaman'] = relationship(backref='favourite')
+    sailor: Mapped['Sailor'] = relationship(backref='favourite')
     vacancy: Mapped['Vacancy'] = relationship(backref='favourite')
 
     def __str__(self):
-        return f'Favourite ID: {self.id} ({self.seaman_id} / {self.vacancy_id})'
+        return f'Favourite ID: {self.id}'
