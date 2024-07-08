@@ -9,14 +9,14 @@ def error_button(
     keyboard.add(
         InlineKeyboardButton(
             text='🧭 Menu',
-            callback_data='menu'
+            callback_data='menu',
         )
     )
 
     keyboard.add(
         InlineKeyboardButton(
             text='⚙️ Support',
-            url='https://t.me/SeaJobaSupport'
+            url='https://t.me/SeaJobaSupport',
         )
     )
 
