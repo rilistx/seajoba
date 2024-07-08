@@ -25,7 +25,11 @@ async def start(message: Message, session: AsyncSession, state: FSMContext):
     )
 
     if user:
-        text = 'User exist!'
+        text = (
+            f'<b>⚠️ Warning</b>\n\n'
+            f'You are already registered in the system as a {user.role}.'
+        )
+
         reply_markup = ReplyKeyboardRemove()
 
         await message.answer(
@@ -39,7 +43,10 @@ async def start(message: Message, session: AsyncSession, state: FSMContext):
             state=state,
         )
 
-    text = 'Hello!'
+    text = (
+        f'<b>👋🏻 Hello {message.from_user.first_name}</b>\n\n'
+    )
+
     reply_markup = role_button()
 
     await message.answer(
@@ -60,7 +67,11 @@ async def registration(message: Message, session: AsyncSession, state: FSMContex
         role=role,
     )
 
-    text = f'OK! You {role}'
+    text = (
+        f'<b>✅ Success</b>\n\n'
+        f'You became part of the team as a {role}.'
+    )
+
     reply_markup = ReplyKeyboardRemove()
 
     await message.answer(
@@ -79,7 +90,13 @@ async def registration(message: Message, session: AsyncSession, state: FSMContex
 
 @start_router.message(StartState.START)
 async def start_error(message: Message) -> None:
-    text = 'Error!'
+    text = (
+        '<b>⛔️ Error</b>\n\n'
+        'There is something wrong with your request.\n\n'
+        '<i>If you are sure that you have done everything correctly, '
+        'please write to technical support and we will try to fix this error.</i>'
+    )
+
     reply_markup = role_button()
 
     await message.answer(

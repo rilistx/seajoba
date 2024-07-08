@@ -31,6 +31,19 @@ class Country(Base):
         return f'Country ID: {self.id}'
 
 
+class City(Base):
+    __tablename__ = 'city'
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    name: Mapped[str]
+    country_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('country.id', ondelete='CASCADE'))
+
+    country: Mapped['Country'] = relationship(backref='city')
+
+    def __str__(self):
+        return f'City ID: {self.id}'
+
+
 class Nationality(Base):
     __tablename__ = 'nationality'
 
@@ -72,9 +85,9 @@ class Company(Base):
     site: Mapped[str | None]
     info: Mapped[str | None]
     start: Mapped[DateTime] = mapped_column(DateTime)
-    country_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('country.id', ondelete='CASCADE'))
+    city_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('city.id', ondelete='CASCADE'))
 
-    country: Mapped['Country'] = relationship(backref='company')
+    city: Mapped['City'] = relationship(backref='company')
 
     def __str__(self):
         return f'Company ID: {self.id}'

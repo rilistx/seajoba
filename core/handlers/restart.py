@@ -6,8 +6,8 @@ from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database.query.user import user_search
-from core.handlers.menu import menu
 from core.handlers.start import start
+from core.handlers.menu import menu
 
 
 restart_router = Router()
@@ -17,7 +17,11 @@ restart_router = Router()
 async def restart(message: Message, session: AsyncSession, state: FSMContext):
     await state.clear()
 
-    text = 'Restart bot!'
+    text = (
+        '<b>🔄 Restart</b>\n\n'
+        'Bot has been successfully restarted.'
+    )
+
     reply_markup = ReplyKeyboardRemove()
 
     await message.answer(

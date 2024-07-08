@@ -1,17 +1,21 @@
 from aiogram import Bot, Dispatcher
 
+from core.database.checker import checker
 from core.settings import admin_id
 
 
 async def on_startup(bot: Bot) -> None:
+    await checker()
+
     await bot.send_message(
         chat_id=admin_id,
-        text="Run bot 👍🏻",
+        text="Start bot 👍🏻",
     )
 
 
 async def on_shutdown(bot: Bot, dispatcher: Dispatcher) -> None:
     await dispatcher.storage.close()
+
     await bot.send_message(
         chat_id=admin_id,
         text="Stop bot 👎🏻",

@@ -10,12 +10,14 @@ async def user_create(
         user_id: int,
         role: str,
         first_name: str | None = None,
+        premium: bool = False,
 ) -> None:
     session.add(
         User(
             id=user_id,
             role=role,
             first_name=first_name,
+            premium=premium,
         )
     )
 
