@@ -6,23 +6,22 @@ from aiogram.types import BotCommandScopeDefault
 
 from core.commands.menu import commands
 from core.database.engine import async_session
-from core.handlers import start, restart, menu, error
-from core.handlers.main import on_startup, on_shutdown
+from core.handlers import start, branch, error
+from core.handlers.main import jobastart, jobastop
 from core.middlewares.session import SessionMiddleware
-from core.settings import bot, storage
+from core.utils.configer import bot, storage
 
 
 async def unpacking() -> None:
     dp = Dispatcher(storage=storage)
 
-    dp.startup.register(on_startup)
-    dp.shutdown.register(on_shutdown)
+    dp.startup.register(jobastart)
+    dp.shutdown.register(jobastop)
 
     dp.update.middleware(SessionMiddleware(session_pool=async_session))
 
-    dp.include_router(restart.restart_router)
     dp.include_router(start.start_router)
-    dp.include_router(menu.menu_router)
+    dp.include_router(branch.branch_router)
     dp.include_router(error.error_router)
 
     try:

@@ -1,7 +1,7 @@
 from environs import Env
 
 
-class Envs:
+class Receiver:
     env = Env()
     env.read_env('.env')
 
@@ -41,6 +41,3 @@ class Envs:
             'redis_host': cls.env.str("REDIS_HOST"),
             'redis_port': cls.env.str("REDIS_PORT"),
         }
-
-
-my_envs = Envs()

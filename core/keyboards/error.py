@@ -16,7 +16,7 @@ def error_button(
     keyboard.add(
         InlineKeyboardButton(
             text='⚙️ Support',
-            url='https://t.me/SeaJobaSupport',
+            callback_data='support',
         )
     )
 

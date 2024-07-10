@@ -5,8 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from core.settings import postgres_url
-
+from core.utils.configer import postgres_url
 from core.database.models import Base
 
 

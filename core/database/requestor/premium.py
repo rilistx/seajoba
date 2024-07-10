@@ -8,11 +8,14 @@ async def premium_create(
         *,
         session: AsyncSession,
         premium_id: int,
-
+        sailor: int,
+        manager: int,
 ) -> None:
     session.add(
         Premium(
             id=premium_id,
+            sailor=sailor,
+            manager=manager,
         )
     )
 
