@@ -13,8 +13,8 @@ class Premium(Base):
     __tablename__ = 'premium'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    manager: Mapped[int] = mapped_column(default=0)
-    seamen: Mapped[int] = mapped_column(default=0)
+    sailor: Mapped[int]
+    manager: Mapped[int]
 
     def __str__(self):
         return f'Premium ID: {self.id}'
@@ -144,9 +144,10 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     role: Mapped[str]
+    premium: Mapped[bool]
     first_name: Mapped[str | None]
     active: Mapped[bool] = mapped_column(default=True)
-    premium: Mapped[bool] = mapped_column(default=False)
+    blocked: Mapped[bool] = mapped_column(default=False)
 
     def __str__(self):
         return f'User ID: {self.id}'
@@ -164,7 +165,7 @@ class Sailor(Base):
     birth: Mapped[DateTime] = mapped_column(DateTime)
     nationality_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('nationality.id', ondelete='CASCADE'))
     rank_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('rank.id', ondelete='CASCADE'))
-    vessel_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('vessel.id', ondelete='CASCADE'))
+    vessel_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey('vessel.id', ondelete='CASCADE'))
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.id', ondelete='CASCADE'))
 
     nationality: Mapped['Nationality'] = relationship(backref='sailor')

@@ -9,8 +9,8 @@ async def user_create(
         session: AsyncSession,
         user_id: int,
         role: str,
+        premium: bool,
         first_name: str | None = None,
-        premium: bool = False,
 ) -> None:
     session.add(
         User(

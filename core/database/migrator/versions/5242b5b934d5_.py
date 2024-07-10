@@ -1,10 +1,13 @@
-"""empty message
+"""
 
-Revision ID: 3ea7fd72a1e9
+Empty message
+
+Revision ID: 5242b5b934d5
 Revises: SeaJoba Data
-Create Date: 2024-07-09 00:00:06.467284
+Create Date: 2024-07-10 23:01:54.483657
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -12,7 +15,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3ea7fd72a1e9'
+revision: str = '5242b5b934d5'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -73,8 +76,8 @@ def upgrade() -> None:
     op.create_table(
         'premium',
         sa.Column('id', sa.BigInteger(), nullable=False),
+        sa.Column('sailor', sa.Integer(), nullable=False),
         sa.Column('manager', sa.Integer(), nullable=False),
-        sa.Column('seamen', sa.Integer(), nullable=False),
         sa.Column('created', sa.DateTime(), nullable=False),
         sa.Column('updated', sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint('id')
@@ -83,9 +86,10 @@ def upgrade() -> None:
         'user',
         sa.Column('id', sa.BigInteger(), nullable=False),
         sa.Column('role', sa.String(), nullable=False),
+        sa.Column('premium', sa.Boolean(), nullable=False),
         sa.Column('first_name', sa.String(), nullable=True),
         sa.Column('active', sa.Boolean(), nullable=False),
-        sa.Column('premium', sa.Boolean(), nullable=False),
+        sa.Column('blocked', sa.Boolean(), nullable=False),
         sa.Column('created', sa.DateTime(), nullable=False),
         sa.Column('updated', sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint('id')
@@ -146,7 +150,7 @@ def upgrade() -> None:
         sa.Column('birth', sa.DateTime(), nullable=False),
         sa.Column('nationality_id', sa.BigInteger(), nullable=False),
         sa.Column('rank_id', sa.BigInteger(), nullable=False),
-        sa.Column('vessel_id', sa.BigInteger(), nullable=False),
+        sa.Column('vessel_id', sa.BigInteger(), nullable=True),
         sa.Column('user_id', sa.BigInteger(), nullable=False),
         sa.Column('created', sa.DateTime(), nullable=False),
         sa.Column('updated', sa.DateTime(), nullable=False),
