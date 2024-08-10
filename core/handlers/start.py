@@ -5,21 +5,27 @@ from aiogram.fsm.context import FSMContext
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.database.requestor.premium import premium_search
-from core.database.requestor.user import user_create, user_search
-from core.filters.role import RoleFilter
-from core.handlers.branch import menu
+from core.database.queryset import user_create, user_search
+from core.filters.user import RoleUserFilter
+from core.handlers.menu import menu
 from core.keyboards.start import role_button
-from core.utils.configer import premium_id
 from core.states.start import StartState
 
 
 start_router = Router()
 
 
-@start_router.message(CommandStart())
-async def start(message: Message, session: AsyncSession, state: FSMContext):
+@start_router.message(
+    CommandStart(),
+)
+async def start(
+        message: Message,
+        session: AsyncSession,
+        state: FSMContext,
+):
     await state.clear()
+
+    ReplyKeyboardRemove()
 
     user = await user_search(
         session=session,
@@ -32,11 +38,8 @@ async def start(message: Message, session: AsyncSession, state: FSMContext):
             f'You are already registered in the system as a {user.role}.'
         )
 
-        reply_markup = ReplyKeyboardRemove()
-
         await message.answer(
             text=text,
-            reply_markup=reply_markup,
         )
 
         return await menu(
@@ -59,20 +62,21 @@ async def start(message: Message, session: AsyncSession, state: FSMContext):
     await state.set_state(StartState.ROLE)
 
 
-@start_router.message(StartState.ROLE, RoleFilter())
-async def registration(message: Message, session: AsyncSession, state: FSMContext):
+@start_router.message(
+    StartState.ROLE,
+    RoleUserFilter(),
+)
+async def registration(
+        message: Message,
+        session: AsyncSession,
+        state: FSMContext,
+):
     role = 'sailor' if message.text == '👨‍✈️ Sailor' else 'manager'
-
-    premium: bool = await premium_search(
-        session=session,
-        premium_id=premium_id,
-    )
 
     await user_create(
         session=session,
         user_id=message.from_user.id,
         role=role,
-        premium=False if premium else True,
     )
 
     text = (
@@ -96,8 +100,12 @@ async def registration(message: Message, session: AsyncSession, state: FSMContex
     )
 
 
-@start_router.message(StartState.ROLE)
-async def error(message: Message) -> None:
+@start_router.message(
+    StartState.ROLE,
+)
+async def error(
+        message: Message,
+) -> None:
     text = (
         '<b>⛔️ Error</b>\n\n'
         'There is something wrong with your request.\n\n'

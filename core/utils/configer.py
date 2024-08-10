@@ -10,11 +10,7 @@ my_receiver = Receiver()
 
 
 bot_token = my_receiver.get_bot_token()
-pay_token = my_receiver.get_pay_token()
-
-admin_id = my_receiver.get_admin_id()
-forum_id = my_receiver.get_forum_id()
-premium_id = my_receiver.get_premium_id()
+bot_admin = my_receiver.get_bot_admin()
 
 postgres_data = my_receiver.get_postgres_data()
 redis_data = my_receiver.get_redis_data()

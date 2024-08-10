@@ -6,9 +6,11 @@ from aiogram.types import BotCommandScopeDefault
 
 from core.commands.menu import commands
 from core.database.engine import async_session
-from core.handlers import start, branch, error
+from core.handlers import start, menu, sailor, manager, vacancy, block, error
 from core.handlers.main import jobastart, jobastop
+from core.middlewares.scheduler import SchedulerMiddleware
 from core.middlewares.session import SessionMiddleware
+from core.scheduler.engine import async_scheduler
 from core.utils.configer import bot, storage
 
 
@@ -18,10 +20,15 @@ async def unpacking() -> None:
     dp.startup.register(jobastart)
     dp.shutdown.register(jobastop)
 
-    dp.update.middleware(SessionMiddleware(session_pool=async_session))
+    dp.update.middleware(SessionMiddleware(async_session=async_session))
+    dp.update.middleware(SchedulerMiddleware(async_scheduler=async_scheduler))
 
     dp.include_router(start.start_router)
-    dp.include_router(branch.branch_router)
+    dp.include_router(menu.menu_router)
+    dp.include_router(block.block_router)
+    dp.include_router(sailor.sailor_router)
+    dp.include_router(manager.manager_router)
+    dp.include_router(vacancy.vacancy_router)
     dp.include_router(error.error_router)
 
     try:

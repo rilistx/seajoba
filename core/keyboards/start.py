@@ -2,19 +2,20 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, KeyboardButton
 
 
 def role_button(
+        *,
         sizes: tuple[int] = (2, ),
 ):
     keyboard = ReplyKeyboardBuilder()
 
     keyboard.add(
         KeyboardButton(
-            text="👨‍✈️ Sailor",
+            text='👨‍✈️ Sailor',
         )
     )
 
     keyboard.add(
         KeyboardButton(
-            text="👩‍💼 Manager",
+            text='👩‍💼 Manager',
         )
     )
 

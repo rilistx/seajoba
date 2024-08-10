@@ -9,26 +9,15 @@ class Base(DeclarativeBase):
     updated: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
 
-class Premium(Base):
-    __tablename__ = 'premium'
-
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    sailor: Mapped[int]
-    manager: Mapped[int]
-
-    def __str__(self):
-        return f'Premium ID: {self.id}'
-
-
 class Country(Base):
     __tablename__ = 'country'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    name: Mapped[str]
-    flag: Mapped[str]
-
-    def __str__(self):
-        return f'Country ID: {self.id}'
+    flag: Mapped[str] = mapped_column(unique=True)
+    name: Mapped[str] = mapped_column(unique=True)
+    flag_union: Mapped[str | None]
+    name_union: Mapped[str | None]
+    nationality: Mapped[str] = mapped_column(unique=True)
 
 
 class City(Base):
@@ -40,67 +29,76 @@ class City(Base):
 
     country: Mapped['Country'] = relationship(backref='city')
 
-    def __str__(self):
-        return f'City ID: {self.id}'
-
-
-class Nationality(Base):
-    __tablename__ = 'nationality'
-
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    name: Mapped[str]
-
-    def __str__(self):
-        return f'Nationality ID: {self.id}'
-
 
 class Location(Base):
     __tablename__ = 'location'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    name: Mapped[str]
+    area: Mapped[str] = mapped_column(unique=True)
 
-    def __str__(self):
-        return f'Location ID: {self.id}'
+
+class Crew(Base):
+    __tablename__ = 'crew'
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    composition: Mapped[str] = mapped_column(unique=True)
 
 
 class Charter(Base):
     __tablename__ = 'charter'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    name: Mapped[str]
-    info: Mapped[str | None]
-
-    def __str__(self):
-        return f'Charter ID: {self.id}'
+    name: Mapped[str] = mapped_column(unique=True)
+    info: Mapped[str]
 
 
 class Company(Base):
     __tablename__ = 'company'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    name: Mapped[str]
+    name: Mapped[str] = mapped_column(unique=True)
     phone: Mapped[str]
     email: Mapped[str]
-    site: Mapped[str | None]
-    info: Mapped[str | None]
-    start: Mapped[DateTime] = mapped_column(DateTime)
+    site: Mapped[str]
+    info: Mapped[str]
+    address: Mapped[str]
     city_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('city.id', ondelete='CASCADE'))
 
     city: Mapped['City'] = relationship(backref='company')
 
-    def __str__(self):
-        return f'Company ID: {self.id}'
+
+class Fleet(Base):
+    __tablename__ = 'fleet'
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(unique=True)
+
+
+class Type(Base):
+    __tablename__ = 'type'
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    name: Mapped[str]
+    fleet_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('fleet.id', ondelete='CASCADE'))
+
+    fleet: Mapped['Fleet'] = relationship(backref='type')
+
+
+class Vessel(Base):
+    __tablename__ = 'vessel'
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    name: Mapped[str]
+    type_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('type.id', ondelete='CASCADE'))
+
+    type: Mapped['Type'] = relationship(backref='vessel')
 
 
 class Position(Base):
     __tablename__ = 'position'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    name: Mapped[str]
-
-    def __str__(self):
-        return f'Position ID: {self.id}'
+    name: Mapped[str] = mapped_column(unique=True)
 
 
 class Rank(Base):
@@ -112,69 +110,14 @@ class Rank(Base):
 
     position: Mapped['Position'] = relationship(backref='rank')
 
-    def __str__(self):
-        return f'Rank ID: {self.id}'
-
-
-class Fleet(Base):
-    __tablename__ = 'fleet'
-
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    name: Mapped[str]
-
-    def __str__(self):
-        return f'Fleet ID: {self.id}'
-
-
-class Vessel(Base):
-    __tablename__ = 'vessel'
-
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    name: Mapped[str]
-    fleet_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('fleet.id', ondelete='CASCADE'))
-
-    fleet: Mapped['Fleet'] = relationship(backref='vessel')
-
-    def __str__(self):
-        return f'Vessel ID: {self.id}'
-
 
 class User(Base):
     __tablename__ = 'user'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     role: Mapped[str]
-    premium: Mapped[bool]
     first_name: Mapped[str | None]
-    active: Mapped[bool] = mapped_column(default=True)
     blocked: Mapped[bool] = mapped_column(default=False)
-
-    def __str__(self):
-        return f'User ID: {self.id}'
-
-
-class Sailor(Base):
-    __tablename__ = 'sailor'
-
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    phone: Mapped[str]
-    email: Mapped[str]
-    whatsapp: Mapped[bool]
-    openwork: Mapped[bool]
-    application: Mapped[str]
-    birth: Mapped[DateTime] = mapped_column(DateTime)
-    nationality_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('nationality.id', ondelete='CASCADE'))
-    rank_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('rank.id', ondelete='CASCADE'))
-    vessel_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey('vessel.id', ondelete='CASCADE'))
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.id', ondelete='CASCADE'))
-
-    nationality: Mapped['Nationality'] = relationship(backref='sailor')
-    rank: Mapped['Rank'] = relationship(backref='sailor')
-    vessel: Mapped['Vessel'] = relationship(backref='sailor')
-    user: Mapped['User'] = relationship(backref='sailor')
-
-    def __str__(self):
-        return f'Sailor ID: {self.id}'
 
 
 class Manager(Base):
@@ -182,60 +125,81 @@ class Manager(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     phone: Mapped[str]
-    email: Mapped[str]
     whatsapp: Mapped[bool]
+    email: Mapped[str]
     company_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('company.id', ondelete='CASCADE'))
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.id', ondelete='CASCADE'))
 
     company: Mapped['Company'] = relationship(backref='manager')
     user: Mapped['User'] = relationship(backref='manager')
 
-    def __str__(self):
-        return f'Manager ID: {self.id}'
+
+class Sailor(Base):
+    __tablename__ = 'sailor'
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    phone: Mapped[str]
+    whatsapp: Mapped[bool]
+    email: Mapped[str]
+    birth: Mapped[DateTime] = mapped_column(DateTime)
+    application: Mapped[str | None]
+    openwork: Mapped[bool]
+    nationality_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('country.id', ondelete='CASCADE'))
+    vessel_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey('vessel.id', ondelete='CASCADE'))
+    rank_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('rank.id', ondelete='CASCADE'))
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.id', ondelete='CASCADE'))
+
+    nationality: Mapped['Country'] = relationship(backref='sailor')
+    vessel: Mapped['Vessel'] = relationship(backref='sailor')
+    rank: Mapped['Rank'] = relationship(backref='sailor')
+    user: Mapped['User'] = relationship(backref='sailor')
 
 
 class Vacancy(Base):
     __tablename__ = 'vacancy'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    salary: Mapped[str]
-    duration: Mapped[str]
+    salary: Mapped[int]
+    duration: Mapped[str | None]
     age: Mapped[int | None]
-    deadweight: Mapped[str | None]
+    deadweight: Mapped[int | None]
     requirements: Mapped[str | None]
     embarkation: Mapped[DateTime] = mapped_column(DateTime)
     location_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey('location.id', ondelete='CASCADE'))
     charter_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey('charter.id', ondelete='CASCADE'))
-    nationality_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey('nationality.id', ondelete='CASCADE'))
-    company_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('company.id', ondelete='CASCADE'))
-    rank_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('rank.id', ondelete='CASCADE'))
+    crew_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey('crew.id', ondelete='CASCADE'))
     vessel_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('vessel.id', ondelete='CASCADE'))
-    manager_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('manager.id', ondelete='CASCADE'))
+    rank_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('rank.id', ondelete='CASCADE'))
+    manager_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('manager.id', ondelete='CASCADE'))\
 
     location: Mapped['Location'] = relationship(backref='vacancy')
     charter: Mapped['Charter'] = relationship(backref='vacancy')
-    nationality: Mapped['Nationality'] = relationship(backref='vacancy')
-    company: Mapped['Company'] = relationship(backref='vacancy')
-    rank: Mapped['Rank'] = relationship(backref='vacancy')
+    crew: Mapped['Crew'] = relationship(backref='vacancy')
     vessel: Mapped['Vessel'] = relationship(backref='vacancy')
+    rank: Mapped['Rank'] = relationship(backref='vacancy')
     manager: Mapped['Manager'] = relationship(backref='vacancy')
 
-    def __str__(self):
-        return f'Vacancy ID: {self.id}'
+
+class Citizenship(Base):
+    __tablename__ = 'citizenship'
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    vacancy_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('vacancy.id', ondelete='CASCADE'))
+    country_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('country.id', ondelete='CASCADE'))
+
+    vacancy: Mapped['Vacancy'] = relationship(backref='citizenship')
+    country: Mapped['Country'] = relationship(backref='citizenship')
 
 
-class View(Base):
-    __tablename__ = 'view'
+class Preview(Base):
+    __tablename__ = 'preview'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     sailor_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('sailor.id', ondelete='CASCADE'))
     vacancy_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('vacancy.id', ondelete='CASCADE'))
 
-    sailor: Mapped['Sailor'] = relationship(backref='view')
-    vacancy: Mapped['Vacancy'] = relationship(backref='view')
-
-    def __str__(self):
-        return f'View ID: {self.id}'
+    sailor: Mapped['Sailor'] = relationship(backref='preview')
+    vacancy: Mapped['Vacancy'] = relationship(backref='preview')
 
 
 class Favourite(Base):
@@ -247,6 +211,3 @@ class Favourite(Base):
 
     sailor: Mapped['Sailor'] = relationship(backref='favourite')
     vacancy: Mapped['Vacancy'] = relationship(backref='favourite')
-
-    def __str__(self):
-        return f'Favourite ID: {self.id}'

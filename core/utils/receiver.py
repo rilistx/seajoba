@@ -10,20 +10,8 @@ class Receiver:
         return cls.env.str("BOT_TOKEN")
 
     @classmethod
-    def get_pay_token(cls) -> str:
-        return cls.env.str("PAY_TOKEN")
-
-    @classmethod
-    def get_admin_id(cls) -> int:
-        return cls.env.int("ADMIN_ID")
-
-    @classmethod
-    def get_forum_id(cls) -> int:
-        return cls.env.int("FORUM_ID")
-
-    @classmethod
-    def get_premium_id(cls) -> int:
-        return cls.env.int("PREMIUM_ID")
+    def get_bot_admin(cls) -> int:
+        return cls.env.int("BOT_ADMIN")
 
     @classmethod
     def get_postgres_data(cls) -> dict:

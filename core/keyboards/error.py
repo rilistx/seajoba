@@ -1,7 +1,10 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
+from core.components.redirector import MenuData
+
 
 def error_button(
+        *,
         sizes: tuple[int] = (2, ),
 ):
     keyboard = InlineKeyboardBuilder()
@@ -9,14 +12,20 @@ def error_button(
     keyboard.add(
         InlineKeyboardButton(
             text='🧭 Menu',
-            callback_data='menu',
+            callback_data=MenuData(
+                key='menu',
+                level=0,
+            ).pack()
         )
     )
 
     keyboard.add(
         InlineKeyboardButton(
             text='⚙️ Support',
-            callback_data='support',
+            callback_data=MenuData(
+                key='support',
+                level=0,
+            ).pack()
         )
     )
 
